@@ -6,6 +6,7 @@ import androidx.work.RxWorker
 import androidx.work.WorkerParameters
 import io.reactivex.Observable
 import io.reactivex.Single
+import org.itstep.liannoi.worker.presentation.PresentationDefaults
 
 class ValuesWorker(
     context: Context,
@@ -17,5 +18,11 @@ class ValuesWorker(
             .repeat()
             .take(20)
             .toList()
-            .map { Result.success(Data.Builder().putIntArray("KEY", it.toIntArray()).build()) }
+            .map {
+                val data: Data = Data.Builder()
+                    .putIntArray(PresentationDefaults.WORKER_VALUES, it.toIntArray())
+                    .build()
+
+                Result.success(data)
+            }
 }

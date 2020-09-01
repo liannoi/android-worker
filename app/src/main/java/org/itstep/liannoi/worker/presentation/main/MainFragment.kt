@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import org.itstep.liannoi.worker.databinding.FragmentMainBinding
-import org.itstep.liannoi.worker.presentation.common.getViewModelFactory
+import org.itstep.liannoi.worker.presentation.common.extensions.getViewModelFactory
 
 class MainFragment : Fragment() {
 
