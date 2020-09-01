@@ -24,6 +24,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
     apply plugin: 'com.diffplug.gradle.spotless'
     spotless {
@@ -47,4 +48,8 @@ ext {
     fragmentVersion = "1.2.5"
     lifecycleVersion = "2.2.0"
     navigationVersion = "2.3.0"
+    workVersion = "2.4.0"
+    rxAndroidVersion = "2.1.1"
+    rxJavaVersion = "2.2.19"
+    rxWorkVersion = "1.0.0"
 }
