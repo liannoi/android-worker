@@ -2,13 +2,13 @@ package org.itstep.liannoi.worker.presentation.main
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.paulinasadowska.rxworkmanagerobservers.extensions.getWorkDataByIdSingle
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import org.itstep.liannoi.worker.presentation.PresentationDefaults
+import org.itstep.liannoi.worker.presentation.common.workers.AdderWorker
+import org.itstep.liannoi.worker.presentation.common.workers.AverageWorker
 import org.itstep.liannoi.worker.presentation.common.workers.ValuesWorker
 
 class MainViewModel constructor(
@@ -18,23 +18,60 @@ class MainViewModel constructor(
     private val disposable: CompositeDisposable = CompositeDisposable()
 
     init {
-        generateValues()
+        sendRequests()
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Helpers
     ///////////////////////////////////////////////////////////////////////////
 
-    private fun generateValues() {
-        val request: OneTimeWorkRequest = OneTimeWorkRequestBuilder<ValuesWorker>().build()
-        workManager.enqueue(request)
+    private fun sendRequests() {
+        val valuesRequest: OneTimeWorkRequest = OneTimeWorkRequestBuilder<ValuesWorker>().build()
+        val adderRequest: OneTimeWorkRequest = OneTimeWorkRequestBuilder<AdderWorker>().build()
+        val averageRequest: OneTimeWorkRequest = OneTimeWorkRequestBuilder<AverageWorker>().build()
 
-        workManager.getWorkDataByIdSingle(request.id)
-            .subscribe({
-                val array: IntArray = it.getIntArray(PresentationDefaults.WORKER_VALUES)!!
-                Log.d(TAG, "onCreate: ${array.contentToString()}")
-            }, {})
+        workManager.beginWith(valuesRequest)
+            .then(mutableListOf(adderRequest, averageRequest))
+            .enqueue()
+
+        handleValuesRequest(valuesRequest)
+        handleAdderRequest(adderRequest)
+        handleAverageRequest(averageRequest)
+    }
+
+    private fun handleAverageRequest(request: WorkRequest) {
+        request.handle {
+            val average: Int = it.getInt(PresentationDefaults.WORKER_AVERAGE, 0)
+            Log.d(TAG, "averageRequest: $average")
+        }
+    }
+
+    private fun handleAdderRequest(request: WorkRequest) {
+        request.handle {
+            val sum: Int = it.getInt(PresentationDefaults.WORKER_ADDER, 0)
+            Log.d(TAG, "adderRequest: $sum")
+        }
+    }
+
+    private fun handleValuesRequest(request: WorkRequest) {
+        request.handle {
+            val array: IntArray = it.getIntArray(PresentationDefaults.WORKER_VALUES)!!
+            Log.d(TAG, "valuesRequest: ${array.contentToString()}")
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Local extension methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    private fun WorkRequest.handle(function: (t: Data) -> Unit) {
+        workManager.getWorkDataByIdSingle(this.id)
+            .subscribe(function, {})
             .follow()
+    }
+
+    private fun Disposable.follow() {
+        disposable.add(this)
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -45,10 +82,6 @@ class MainViewModel constructor(
         super.onCleared()
         disposable.clear()
         disposable.dispose()
-    }
-
-    private fun Disposable.follow() {
-        disposable.add(this)
     }
 
     ///////////////////////////////////////////////////////////////////////////
