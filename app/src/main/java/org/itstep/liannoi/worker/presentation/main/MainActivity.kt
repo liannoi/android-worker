@@ -1,7 +1,8 @@
-package org.itstep.liannoi.worker
+package org.itstep.liannoi.worker.presentation.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import org.itstep.liannoi.worker.R
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="java.util.Arrays" />
+
+        <variable
+            name="viewmodel"
+            type="org.itstep.liannoi.worker.presentation.main.MainViewModel" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{"Array: " + Arrays.toString(viewmodel.array)}'
+            android:visibility="@{viewmodel.array == null ? View.GONE : View.VISIBLE}"
+            tools:text="Array: [1, 2]" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text='@{"Sum: " + viewmodel.sum}'
+            android:visibility="@{viewmodel.sum == null ? View.GONE : View.VISIBLE}"
+            tools:text="Sum: 3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{"Average: " + viewmodel.average}'
+            android:visibility="@{viewmodel.average == null ? View.GONE : View.VISIBLE}"
+            tools:text="Average: 1" />
+    </LinearLayout>
+
+</layout>
