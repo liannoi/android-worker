@@ -16,7 +16,7 @@ class ValuesWorker(
     override fun createWork(): Single<Result> =
         Observable.fromCallable { (0..40).random() }
             .repeat()
-            .take(20)
+            .take(10)
             .toList()
             .map {
                 val data: Data = Data.Builder()
